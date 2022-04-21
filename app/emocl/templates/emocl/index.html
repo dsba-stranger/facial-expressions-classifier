@@ -28,13 +28,61 @@
   <!-- your content here... -->
   <div class="w-50 ml-0 mr-0 mx-auto text-center">
     <h1 margin="10em">Emocl</h1>
-    <label class="form-label" for="customFile">Choose your image</label>
-    <input type="file" class="form-control" accept="image/*" id="customFile" />
+      <div class="container col-md-6">
+          <div class="mb-5">
+              <label for="imgFile" class="form-label">Choose your image for classification</label>
+              <input class="form-control" type="file" id="imgFile">
+              <button id="button" class="btn btn-primary mt-3">Classify</button>
+          </div>
+          <img id="frame" src="" class="img-fluid" />
+          <h3 id="emotion_label"></h3>
+      </div>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
   <script src="js/scripts.js"></script>
+  <script>
+    emotions_map = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprise'};
+
+    $(document).ready(() => {
+      $('#imgFile').on('change', (e) => {
+        let imgSelector = e.target;
+        let image = imgSelector.files[0];
+        let reader = new FileReader();
+
+        reader.onload = (ev) => {
+            $('#frame').attr('src', ev.target.result);
+            $('#emotion_label').text('');
+        };
+
+        reader.readAsDataURL(image);
+      });
+
+      $('#button').click((e) => {
+        let fd = new FormData();
+        let inputFile = $('#imgFile')[0];
+        let files = inputFile.files;
+
+        if (files.length > 0) {
+            fd.append('image', files[0]);
+
+            $.ajax({
+              type: 'POST',
+              enctype: 'multipart/form-data',
+              url: 'api/classify',
+              data: fd,
+              contentType: false,
+              processData: false,
+              success: (cls_index) => {
+                $('#emotion_label').text(emotions_map[cls_index]);
+              }
+            });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
