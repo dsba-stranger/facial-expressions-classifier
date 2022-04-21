@@ -1,3 +1,6 @@
 .DS_Store
-data/*
+.idea/*
+model/data/*
 .ipynb_checkpoints/*
+model/.ipynb_checkpoints/*
+venv/*
