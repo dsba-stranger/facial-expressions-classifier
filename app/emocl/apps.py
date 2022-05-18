@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 import os
-import pickle
+import tensorflow as tf
 
 
 class EmoclConfig(AppConfig):
@@ -8,11 +8,9 @@ class EmoclConfig(AppConfig):
     name = 'emocl'
 
     # create path to models
-    path = 'models.p'
+    path = 'C:/Users/kirill-korolev/ami/facial-expressions-classifier/model/bin/model'
 
     # load models into separate variables
     # these will be accessible via this class
-    with open(path, 'rb') as pickled:
-        data = pickle.load(pickled)
-    pca = data['pca']
-    clf = data['clf']
+
+    model = tf.keras.models.load_model(path)
